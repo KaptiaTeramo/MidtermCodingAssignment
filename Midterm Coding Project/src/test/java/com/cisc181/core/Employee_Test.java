@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author Dad
+ * @author Geoffrey Dressler
  *
  */
 public class Employee_Test {
