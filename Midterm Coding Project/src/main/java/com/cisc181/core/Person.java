@@ -1,13 +1,12 @@
 package com.cisc181.core;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
- * comment
- */
+
 public abstract class Person implements java.io.Serializable {
 
 	private Date DOB;
@@ -46,10 +45,20 @@ public abstract class Person implements java.io.Serializable {
 		return DOB;
 	}
 
-	public void setDOB(Date DOB){
-		this.DOB = DOB;
+	public void setDOB(Date DOB) throws PersonException{
+		Date today = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+		String now = sdf.format(today);
+		String[] nows = now.split("/");
+		String then = sdf.format(DOB);
+		String[] thens = then.split("/");
+		int thenYear = Integer.parseInt(thens[2]);
+		int nowYear = Integer.parseInt(nows[2]);
 		
-		
+		if(nowYear - 100 < thenYear)
+			this.DOB = DOB;
+		else
+			throw new PersonException(this);
 	}
 
 	public void setAddress(String newAddress) {
@@ -60,9 +69,15 @@ public abstract class Person implements java.io.Serializable {
 		return address;
 	}
 
-	public void setPhone(String newPhone_number) {
-		phone_number = newPhone_number;
-	
+	public void setPhone(String newPhone_number) throws PersonException{
+		
+		String regex = "^\\(([0-9]{3})\\)[-\\s]([0-9]{3})[-\\s]([0-9]{4})$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(newPhone_number);
+		if(matcher.matches())
+			phone_number = newPhone_number;
+		else
+			throw new PersonException(this);
 	}
 
 	public String getPhone() {
@@ -77,16 +92,10 @@ public abstract class Person implements java.io.Serializable {
 		return email_address;
 	}
 
-	/*
-	 * Constructors No Arg Constructor
-	 */
+	
 	public Person() {
 
 	}
-
-	/*
-	 * Constructors Constructor with arguments
-	 */
 
 	public Person(String FirstName, String MiddleName, String LastName,
 			Date DOB, String Address, String Phone_number, String Email)
@@ -94,13 +103,24 @@ public abstract class Person implements java.io.Serializable {
 		this.FirstName = FirstName;
 		this.MiddleName = MiddleName;
 		this.LastName = LastName;
-		this.setDOB(DOB);
+		try {
+			this.setDOB(DOB);
+		} catch (PersonException e) {
+			System.out.println("There is a high probability that you are not actually that old");
+			e.printStackTrace();
+		}
 		this.address = Address;
-		this.setPhone(Phone_number);
+		try {
+			this.setPhone(Phone_number);
+		} catch (PersonException e) {
+			System.out.println("You appear to have entered an invalid phone number.");
+			e.printStackTrace();
+		}
 		this.email_address = Email;
 		
 	}
 
+	
 	public void PrintName() {
 		System.out.println(this.FirstName + ' ' + this.MiddleName + ' '
 				+ this.LastName);
