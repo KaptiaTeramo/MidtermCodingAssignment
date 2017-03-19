@@ -77,5 +77,7 @@ public class Student_Test {
 	
 	@Test
 	public void MajorChange(){
+//		J.setMajor(eMajor.CHEM);
+//		assertEquals(j.getMajor, eMajor.CHEM);
 	}
 }
